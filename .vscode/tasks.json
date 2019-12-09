@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [{
+      "label": "(g++) Build:debug",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${fileDirname}/**.cpp",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}.exe",
+        "-Wall"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "(g++) Build:release",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "${file}",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}.exe",
+        "-Wall"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    }
+  ]
+}
