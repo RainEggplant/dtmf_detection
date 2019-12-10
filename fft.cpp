@@ -1,7 +1,7 @@
 #include "fft.h"
 
 namespace fft {
-vector<complex<double>> dft(const vector<complex<double>> x) {
+vector<complex<double>> dft(const vector<complex<double>> &x) {
   size_t len = x.size();
   complex<double> W;
   W = exp(complex<double>(0, -2 * PI / len));
@@ -16,7 +16,7 @@ vector<complex<double>> dft(const vector<complex<double>> x) {
   return X;
 }
 
-vector<complex<double>> fft_2_dit(const vector<complex<double>> x,
+vector<complex<double>> fft_2_dit(const vector<complex<double>> &x,
                                   const int p) {
   size_t n = 1 << p;
 
@@ -57,7 +57,7 @@ vector<complex<double>> fft_2_dit(const vector<complex<double>> x,
   return X;
 }
 
-vector<complex<double>> fft_2_dft(const vector<complex<double>> x,
+vector<complex<double>> fft_2_dft(const vector<complex<double>> &x,
                                   const int p) {
   size_t n = 1 << p;
 
