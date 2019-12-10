@@ -19,6 +19,8 @@ using std::endl;
 using std::pair;
 using std::vector;
 
+char get_key_by_freq(double freq1, double freq2);
+
 int main() {
   AudioFile<double> audioFile;
   audioFile.load("./data1/data1081.wav");
@@ -43,8 +45,13 @@ int main() {
   vector<size_t> sharp_peaks;
   find_peaks(X_abs, &wide_peaks, &sharp_peaks, X_max * 0.8);
 
-  // 转换成频率
+  // 若识别到少于 2 个峰，则失败
   size_t n_peaks = wide_peaks.size() + sharp_peaks.size();
+  if (n_peaks < 2) {
+    return -1;
+  }
+
+  // 转换成频率
   vector<double> peak_freq;
   for (auto it = wide_peaks.begin(); it != wide_peaks.end(); ++it) {
     double freq = ((*it).first + (*it).second) / 2.0 / n_fft * fs;
@@ -56,10 +63,55 @@ int main() {
     peak_freq.push_back(freq);
   }
 
+  // 按照峰值幅度降序排列
+  std::sort(peak_freq.begin(), peak_freq.end(),
+            [&X_abs, fs, n_fft](double freq1, double freq2) {
+              double amp1 = X_abs[(int)(freq1 / fs * n_fft)];
+              double amp2 = X_abs[(int)(freq2 / fs * n_fft)];
+              return amp1 > amp2;
+            });
+
   cout << "peak frequencies:" << endl;
   for (size_t i = 0; i < n_peaks; ++i) {
     cout << peak_freq[i] << endl;
   }
 
+  char key = get_key_by_freq(peak_freq[0], peak_freq[1]);
+  cout << key << endl;
+
   getchar();
+}
+
+char get_key_by_freq(double freq1, double freq2) {
+  static char table[4][4] = {{'1', '2', '3', 'A'},
+                             {'4', '5', '6', 'B'},
+                             {'7', '8', '9', 'C'},
+                             {'*', '0', '#', 'D'}};
+  size_t row;
+  size_t col;
+  if (freq1 > freq2) {
+    std::swap(freq1, freq2);
+  }
+
+  if (freq1 < 733.5) {
+    row = 0;
+  } else if (freq1 < 811) {
+    row = 1;
+  } else if (freq1 < 896.5) {
+    row = 2;
+  } else {
+    row = 3;
+  }
+
+  if (freq2 < 1272.5) {
+    col = 0;
+  } else if (freq2 < 1406.5) {
+    col = 1;
+  } else if (freq2 < 1555) {
+    col = 2;
+  } else {
+    col = 3;
+  }
+
+  return table[row][col];
 }
