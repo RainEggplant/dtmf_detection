@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-namespace fft {
+namespace dsp {
 using std::complex;
 using std::vector;
 const double PI = 3.14159265358979323846;
@@ -22,4 +22,4 @@ vector<complex<double>> fft_2_dft(const vector<complex<double>> &x,
 
 // 求倒序编号
 void get_reversed_index(size_t index[], const size_t n);
-}  // namespace fft
+}  // namespace dsp

@@ -1,6 +1,6 @@
 #include "fft.h"
 
-namespace fft {
+namespace dsp {
 vector<complex<double>> dft(const vector<complex<double>> &x) {
   size_t len = x.size();
   complex<double> W;
@@ -118,4 +118,4 @@ void get_reversed_index(size_t index[], const size_t n) {
     }
   }
 }
-}  // namespace fft
+}  // namespace dsp
