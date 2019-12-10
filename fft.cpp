@@ -1,14 +1,14 @@
 #include "fft.h"
 
 namespace fft {
-vector<complex<double>> dft(const complex<double> x[], const size_t len,
-                            const size_t n) {
+vector<complex<double>> dft(const vector<complex<double>> x) {
+  size_t len = x.size();
   complex<double> W;
-  W = exp(complex<double>(0, -2 * M_PI / n));
-  vector<complex<double>> X(n);
+  W = exp(complex<double>(0, -2 * PI / len));
+  vector<complex<double>> X(len);
 
-  for (size_t i = 0; i < n; ++i) {
-    for (size_t j = 0; j < n; ++j) {
+  for (size_t i = 0; i < len; ++i) {
+    for (size_t j = 0; j < len; ++j) {
       X[i] += x[j] * pow(W, i * j);
     }
   }
@@ -16,7 +16,7 @@ vector<complex<double>> dft(const complex<double> x[], const size_t len,
   return X;
 }
 
-vector<complex<double>> fft_2_dit(const complex<double> x[], size_t len,
+vector<complex<double>> fft_2_dit(const vector<complex<double>> x,
                                   const int p) {
   size_t n = 1 << p;
 
@@ -26,17 +26,16 @@ vector<complex<double>> fft_2_dit(const complex<double> x[], size_t len,
   get_reversed_index(index, n);
 
   // 将输入序列长度取为 n 并排序
-  vector<complex<double>> xs(n);
-
+  vector<complex<double>> X(n);
   for (size_t i = 0; i < n; ++i) {
-    if (index[i] < len) {
-      xs[index[i]] = x[i];
+    if (index[i] < x.size()) {
+      X[i] = x[index[i]];
     }
   }
 
   // 旋转因子
   complex<double> w0;
-  w0 = exp(complex<double>(0, -2 * M_PI / n));
+  w0 = exp(complex<double>(0, -2 * PI / n));
 
   // 执行变换
   size_t step = 1;
@@ -45,30 +44,31 @@ vector<complex<double>> fft_2_dit(const complex<double> x[], size_t len,
       for (int k = 0; k < 1 << i; ++k) {  // 每组有 2^i 个连续序号
         size_t id1 = (1 << (i + 1)) * j + k;
         size_t id2 = id1 + step;
-        complex<double> x1 = xs[id1];
-        complex<double> x2 = xs[id2];
+        complex<double> x1 = X[id1];
+        complex<double> x2 = X[id2];
         complex<double> w = pow(w0, k * (1 << (p - 1 - i)));
-        xs[id1] = x1 + w * x2;
-        xs[id2] = x1 - w * x2;
+        X[id1] = x1 + w * x2;
+        X[id2] = x1 - w * x2;
       }
     }
     step <<= 1;
   }
 
-  return xs;
+  return X;
 }
 
-vector<complex<double>> fft_2_dft(const complex<double> x[], const size_t len,
+vector<complex<double>> fft_2_dft(const vector<complex<double>> x,
                                   const int p) {
   size_t n = 1 << p;
 
-  // 将输入序列长度设为 n
-  vector<complex<double>> xs(x, x + len);
-  xs.resize(n);
+  // 将输入序列长度取为 n
+  vector<complex<double>> xs(n);
+  size_t n_copy = x.size() < n ? x.size() : n;
+  std::copy(x.begin(), x.begin() + n_copy, xs.begin());
 
   // 旋转因子
   complex<double> w0;
-  w0 = exp(complex<double>(0, -2 * M_PI / n));
+  w0 = exp(complex<double>(0, -2 * PI / n));
 
   int step = 1 << (p - 1);
   for (int i = 0; i < p; ++i) {         // p 级
@@ -93,12 +93,12 @@ vector<complex<double>> fft_2_dft(const complex<double> x[], const size_t len,
   get_reversed_index(index, n);
 
   // 排序得到结果
-  vector<complex<double>> result(n);
+  vector<complex<double>> X(n);
   for (size_t i = 0; i < n; ++i) {
-    result[index[i]] = xs[i];
+    X[index[i]] = xs[i];
   }
 
-  return result;
+  return X;
 }
 
 void get_reversed_index(size_t index[], const size_t n) {
