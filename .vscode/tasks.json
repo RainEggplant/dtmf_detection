@@ -6,7 +6,8 @@
       "command": "g++",
       "args": [
         "-g",
-        "${fileDirname}/**.cpp",
+        "${fileDirname}/*.cpp",
+        "${fileDirname}/dsp/*.cpp",
         "-o",
         "${fileDirname}/${fileBasenameNoExtension}.exe",
         "-Wall"
