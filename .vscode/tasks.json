@@ -25,7 +25,8 @@
       "type": "shell",
       "command": "g++",
       "args": [
-        "${file}",
+        "${fileDirname}/*.cpp",
+        "${fileDirname}/dsp/*.cpp",
         "-o",
         "${fileDirname}/${fileBasenameNoExtension}.exe",
         "-Wall"
