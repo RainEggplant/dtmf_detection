@@ -1,5 +1,6 @@
 #include <complex>
 #include <iostream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -13,18 +14,33 @@
 using dsp::abs_vector;
 using dsp::fft_2_dit;
 using dsp::find_peaks;
+using std::cin;
 using std::complex;
 using std::cout;
 using std::endl;
+using std::getline;
 using std::pair;
+using std::string;
 using std::vector;
 
 char get_key_by_freq(double freq1, double freq2);
+char get_key_from_file(string filename);
 
 int main() {
+  string filename;
+  cout << "Input filename (empty line to exit): ";
+  getline(cin, filename);
+  while (!filename.empty()) {
+    char key = get_key_from_file(filename);
+    cout << "Key: " << key << endl;
+    cout << "Input filename (empty line to exit): ";
+    getline(cin, filename);
+  }
+}
+
+char get_key_from_file(string filename) {
   AudioFile<double> audioFile;
-  audioFile.load("./data1/data1081.wav");
-  audioFile.printSummary();
+  audioFile.load(filename);
   auto fs = audioFile.getSampleRate();
 
   // 计算音频的 DFT
@@ -48,7 +64,7 @@ int main() {
   // 若识别到少于 2 个峰，则失败
   size_t n_peaks = wide_peaks.size() + sharp_peaks.size();
   if (n_peaks < 2) {
-    return -1;
+    return 0;
   }
 
   // 转换成频率
@@ -71,15 +87,7 @@ int main() {
               return amp1 > amp2;
             });
 
-  cout << "peak frequencies:" << endl;
-  for (size_t i = 0; i < n_peaks; ++i) {
-    cout << peak_freq[i] << endl;
-  }
-
-  char key = get_key_by_freq(peak_freq[0], peak_freq[1]);
-  cout << key << endl;
-
-  getchar();
+  return get_key_by_freq(peak_freq[0], peak_freq[1]);
 }
 
 char get_key_by_freq(double freq1, double freq2) {
