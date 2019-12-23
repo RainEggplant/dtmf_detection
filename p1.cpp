@@ -59,7 +59,7 @@ char get_key_from_file(string filename) {
   double X_max = (*std::max_element(X_abs.begin(), X_abs.end()));
   vector<pair<size_t, size_t>> wide_peaks;
   vector<size_t> sharp_peaks;
-  find_peaks(X_abs, &wide_peaks, &sharp_peaks, X_max * 0.8);
+  find_peaks(X_abs, &wide_peaks, &sharp_peaks, X_max * 0.6);
 
   // 若识别到少于 2 个峰，则失败
   size_t n_peaks = wide_peaks.size() + sharp_peaks.size();
