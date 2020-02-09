@@ -9,11 +9,7 @@ key_mapping = [
     '*', '0', '#', 'D'
 ];
 
-% extend y to have length of power of 2
-len = length(y);
-N = 2 ^ nextpow2(len);
-y_p = zeros(N, 1);
-y_p(1:len) = y;
+N = length(y);
 k_list = round(freq_list / fs * N);
 omega_list = 2 * pi * k_list / N;
 
@@ -24,7 +20,7 @@ v = zeros(1, 8);   % v[n]
 for n = 1 : N
     v0 = v1;
     v1 = v;
-    v = 2 * cos(omega_list) .* v1 - v0 + y_p(n);
+    v = 2 * cos(omega_list) .* v1 - v0 + y(n);
 end
 
 % find largest two freqs

@@ -1,3 +1,4 @@
+use_fft = input('Enter "0" to use FFT-based method: ');
 [y, fs] = audioread('data2/data.wav');
 
 rms_threshold = 0.3;
@@ -30,8 +31,11 @@ end
 n_key = length(start_frames);
 keys = zeros(1, n_key);
 for k = 1 : n_key
-    keys(k) = my_goertzel(y(start_frames(k) : end_frames(k)), fs);
+    if use_fft == 0
+        keys(k) = get_key_fft(y(start_frames(k) : end_frames(k)), fs);
+    else
+        keys(k) = my_goertzel(y(start_frames(k) : end_frames(k)), fs);
+    end
 end
-
 keys = char(keys);
 disp(['Keys: ', keys]);

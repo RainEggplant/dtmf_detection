@@ -51,8 +51,9 @@ char get_key_from_file(string filename) {
   size_t n_fft = 1 << p;
   auto X = fft_2_dit(x_comp, p);
 
-  // 只取 0 - pi 频域
-  auto X_half = vector<complex<double>>(X.begin(), X.begin() + n_fft / 2);
+  // 只取 0 - 1700 / fs * pi 频域
+  auto X_half =
+      vector<complex<double>>(X.begin(), X.begin() + 1700 * n_fft / fs);
 
   // 寻找峰值
   auto X_abs = abs_vector(X_half);
@@ -64,7 +65,7 @@ char get_key_from_file(string filename) {
   // 若识别到少于 2 个峰，则失败
   size_t n_peaks = wide_peaks.size() + sharp_peaks.size();
   if (n_peaks < 2) {
-    return 0;
+    return 'X';
   }
 
   // 转换成频率
